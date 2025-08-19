@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Stunning To-Do List</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-gradient-light: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        --bg-gradient-dark: linear-gradient(135deg, #18181b 0%, #312e81 100%);
+        --card-gradient-light: linear-gradient(
+          120deg,
+          #e0e7ff 0%,
+          #f1f5f9 100%
+        );
+        --card-gradient-dark: linear-gradient(120deg, #312e81 0%, #18181b 100%);
+        --shadow-light: 0 8px 24px rgba(60, 72, 88, 0.12);
+        --shadow-dark: 0 8px 24px rgba(30, 41, 59, 0.32);
+        --primary: #6366f1;
+        --primary-dark: #818cf8;
+        --text-light: #18181b;
+        --text-dark: #f3f4f6;
+        --low: #38bdf8;
+        --medium: #facc15;
+        --high: #ef4444;
+        --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      [data-theme="dark"] {
+        --bg-gradient: var(--bg-gradient-dark);
+        --card-gradient: var(--card-gradient-dark);
+        --shadow: var(--shadow-dark);
+        --text: var(--text-dark);
+      }
+      [data-theme="light"] {
+        --bg-gradient: var(--bg-gradient-light);
+        --card-gradient: var(--card-gradient-light);
+        --shadow: var(--shadow-light);
+        --text: var(--text-light);
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text);
+        transition: background var(--transition), color var(--transition);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 0;
+      }
+      .background-shapes {
+        position: fixed;
+        z-index: 0;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(32px);
+        opacity: 0.5;
+        animation: float 12s infinite alternate ease-in-out;
+      }
+      .shape1 {
+        width: 320px;
+        height: 320px;
+        background: linear-gradient(135deg, #818cf8, #38bdf8);
+        top: -80px;
+        left: -80px;
+        animation-delay: 0s;
+      }
+      .shape2 {
+        width: 220px;
+        height: 220px;
+        background: linear-gradient(135deg, #facc15, #ef4444);
+        bottom: 10%;
+        right: 5%;
+        animation-delay: 2s;
+      }
+      .shape3 {
+        width: 180px;
+        height: 180px;
+        background: linear-gradient(135deg, #34d399, #818cf8);
+        top: 60%;
+        left: 60%;
+        animation-delay: 4s;
+      }
+      @keyframes float {
+        0% {
+          transform: translateY(0) scale(1);
+        }
+        100% {
+          transform: translateY(40px) scale(1.1);
+        }
+      }
+      .container {
+        z-index: 1;
+        width: 100%;
+        max-width: 480px;
+        margin: 48px auto 0 auto;
+        padding: 0 16px;
+        box-sizing: border-box;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+      }
+      .title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        letter-spacing: -1px;
+        background: linear-gradient(90deg, #6366f1, #38bdf8, #facc15, #ef4444);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        user-select: none;
+      }
+      .theme-toggle {
+        background: var(--card-gradient);
+        border: none;
+        border-radius: 50%;
+        box-shadow: var(--shadow);
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background var(--transition), box-shadow var(--transition),
+          transform var(--transition);
+        outline: none;
+        font-size: 1.3rem;
+        color: var(--primary);
+      }
+      .theme-toggle:active {
+        transform: scale(0.95);
+      }
+      .add-form {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        background: var(--card-gradient);
+        box-shadow: var(--shadow);
+        border-radius: 18px;
+        padding: 12px 16px;
+        align-items: center;
+        transition: background var(--transition), box-shadow var(--transition);
+      }
+      .add-form input[type="text"] {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 1.1rem;
+        color: var(--text);
+        outline: none;
+        padding: 8px 0;
+        transition: color var(--transition);
+      }
+      .add-form select {
+        border: none;
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 1rem;
+        color: #18181b;
+        transition: background var(--transition), color var(--transition);
+      }
+      [data-theme="dark"] .add-form select {
+        background: #312e81;
+        color: #f3f4f6;
+      }
+      .add-btn {
+        background: linear-gradient(90deg, #6366f1, #38bdf8);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 8px 18px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+        transition: background var(--transition), box-shadow var(--transition),
+          transform var(--transition);
+      }
+      .add-btn:hover,
+      .add-btn:focus {
+        background: linear-gradient(90deg, #818cf8, #38bdf8);
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+        transform: translateY(-2px) scale(1.04);
+      }
+      .todo-list {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-bottom: 32px;
+        min-height: 120px;
+      }
+      .todo-card {
+        background: var(--card-gradient);
+        box-shadow: var(--shadow);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        position: relative;
+        transition: box-shadow var(--transition), background var(--transition),
+          transform var(--transition), opacity var(--transition);
+        opacity: 1;
+        cursor: grab;
+        user-select: none;
+        will-change: transform, box-shadow, opacity;
+        z-index: 1;
+      }
+      .todo-card.dragging {
+        opacity: 0.7;
+        box-shadow: 0 12px 32px rgba(99, 102, 241, 0.22);
+        transform: scale(1.03);
+      }
+      .todo-card.completed {
+        opacity: 0.6;
+        text-decoration: line-through;
+        filter: grayscale(0.3);
+      }
+      .todo-card:hover,
+      .todo-card:focus-within {
+        box-shadow: 0 12px 32px rgba(99, 102, 241, 0.18);
+        transform: translateY(-2px) scale(1.02);
+      }
+      .todo-main {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1;
+      }
+      .check-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: border-color var(--transition), background var(--transition),
+          box-shadow var(--transition);
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+        outline: none;
+      }
+      [data-theme="dark"] .check-btn {
+        background: #18181b;
+        border-color: var(--primary-dark);
+      }
+      .check-btn.checked {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+      }
+      .check-btn svg {
+        width: 18px;
+        height: 18px;
+        display: block;
+      }
+      .todo-text {
+        font-size: 1.08rem;
+        font-weight: 500;
+        color: var(--text);
+        transition: color var(--transition);
+        word-break: break-word;
+        flex: 1;
+      }
+      .priority-badge {
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 10px;
+        margin-left: 8px;
+        background: #fff;
+        color: #18181b;
+        box-shadow: 0 2px 8px rgba(60, 72, 88, 0.08);
+        transition: background var(--transition), color var(--transition);
+        user-select: none;
+      }
+      .priority-low {
+        background: var(--low);
+        color: #fff;
+      }
+      .priority-medium {
+        background: var(--medium);
+        color: #fff;
+      }
+      .priority-high {
+        background: var(--high);
+        color: #fff;
+      }
+      .delete-btn {
+        background: linear-gradient(90deg, #ef4444, #facc15);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.12);
+        transition: background var(--transition), box-shadow var(--transition),
+          transform var(--transition);
+        margin-left: 12px;
+      }
+      .delete-btn:hover,
+      .delete-btn:focus {
+        background: linear-gradient(90deg, #ef4444, #f59e42);
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.18);
+        transform: scale(1.04);
+      }
+      @media (max-width: 600px) {
+        .container {
+          max-width: 100%;
+          padding: 0 6px;
+        }
+        .todo-card {
+          padding: 14px 10px;
+        }
+        .add-form {
+          padding: 10px 8px;
+        }
+        .header {
+          flex-direction: column;
+          gap: 12px;
+        }
+        .title {
+          font-size: 1.5rem;
+        }
+      }
+      @media (max-width: 400px) {
+        .todo-card {
+          font-size: 0.95rem;
+        }
+        .priority-badge {
+          font-size: 0.75rem;
+          padding: 3px 8px;
+        }
+        .add-btn,
+        .delete-btn {
+          font-size: 0.9rem;
+          padding: 6px 10px;
+        }
+      }
+      /* Micro-interactions for add/delete */
+      .todo-card.adding {
+        animation: fadeInCard 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .todo-card.removing {
+        animation: fadeOutCard 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0 !important;
+        transform: scale(0.95) translateY(20px) !important;
+      }
+      @keyframes fadeInCard {
+        0% {
+          opacity: 0;
+          transform: scale(0.95) translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      @keyframes fadeOutCard {
+        0% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(0.95) translateY(20px);
+        }
+      }
+      /* Smooth theme transition */
+      * {
+        transition: background var(--transition), color var(--transition),
+          box-shadow var(--transition);
+      }
+    </style>
+  </head>
+  <body data-theme="light">
+    <div class="background-shapes">
+      <div class="shape shape1"></div>
+      <div class="shape shape2"></div>
+      <div class="shape shape3"></div>
+    </div>
+    <div class="container">
+      <div class="header">
+        <span class="title">To-Do List</span>
+        <button
+          class="theme-toggle"
+          aria-label="Toggle theme"
+          title="Toggle Dark/Light Mode"
+        >
+          <svg
+            id="theme-icon"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="5" />
+            <path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+            />
+          </svg>
+        </button>
+      </div>
+      <form class="add-form" autocomplete="off">
+        <input
+          type="text"
+          id="task-input"
+          placeholder="Add a new task..."
+          maxlength="80"
+          required
+        />
+        <select id="priority-input">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+        <button type="submit" class="add-btn">Add</button>
+      </form>
+      <div class="todo-list" id="todo-list"></div>
+    </div>
+    <script>
+      // Theme toggle
+      const themeToggle = document.querySelector(".theme-toggle");
+      const themeIcon = document.getElementById("theme-icon");
+      function setTheme(theme) {
+        document.body.setAttribute("data-theme", theme);
+        themeIcon.innerHTML =
+          theme === "dark"
+            ? `<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>`
+            : `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
+        localStorage.setItem("theme", theme);
+      }
+      themeToggle.addEventListener("click", () => {
+        const current = document.body.getAttribute("data-theme");
+        setTheme(current === "light" ? "dark" : "light");
+      });
+      setTheme(localStorage.getItem("theme") || "light");
+
+      // To-Do logic
+      let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+      const todoList = document.getElementById("todo-list");
+      function saveTasks() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+      }
+      function renderTasks() {
+        todoList.innerHTML = "";
+        tasks.forEach((task, idx) => {
+          const card = document.createElement("div");
+          card.className = "todo-card" + (task.completed ? " completed" : "");
+          card.setAttribute("draggable", "true");
+          card.setAttribute("data-index", idx);
+
+          // Main section
+          const main = document.createElement("div");
+          main.className = "todo-main";
+
+          // Check button
+          const checkBtn = document.createElement("button");
+          checkBtn.className = "check-btn" + (task.completed ? " checked" : "");
+          checkBtn.setAttribute("aria-label", "Mark as completed");
+          checkBtn.innerHTML = task.completed
+            ? `<svg viewBox="0 0 20 20"><polyline points="5 10 9 14 15 6" stroke="white" stroke-width="2" fill="none"/></svg>`
+            : `<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" stroke="var(--primary)" stroke-width="2" fill="none"/></svg>`;
+          checkBtn.onclick = () => {
+            task.completed = !task.completed;
+            saveTasks();
+            renderTasks();
+          };
+
+          // Task text
+          const text = document.createElement("span");
+          text.className = "todo-text";
+          text.textContent = task.text;
+
+          // Priority badge
+          const badge = document.createElement("span");
+          badge.className = "priority-badge priority-" + task.priority;
+          badge.textContent =
+            task.priority.charAt(0).toUpperCase() + task.priority.slice(1);
+
+          main.appendChild(checkBtn);
+          main.appendChild(text);
+          main.appendChild(badge);
+
+          // Delete button
+          const delBtn = document.createElement("button");
+          delBtn.className = "delete-btn";
+          delBtn.setAttribute("aria-label", "Delete task");
+          delBtn.textContent = "Delete";
+          delBtn.onclick = () => {
+            card.classList.add("removing");
+            setTimeout(() => {
+              tasks.splice(idx, 1);
+              saveTasks();
+              renderTasks();
+            }, 350);
+          };
+
+          card.appendChild(main);
+          card.appendChild(delBtn);
+
+          todoList.appendChild(card);
+
+          // Micro-interaction for adding
+          setTimeout(() => card.classList.add("adding"), 10);
+          setTimeout(() => card.classList.remove("adding"), 500);
+        });
+      }
+      renderTasks();
+
+      // Add task
+      document.querySelector(".add-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("task-input");
+        const priority = document.getElementById("priority-input").value;
+        const text = input.value.trim();
+        if (!text) return;
+        tasks.unshift({ text, completed: false, priority });
+        saveTasks();
+        renderTasks();
+        input.value = "";
+        input.focus();
+      });
+
+      // Drag & drop reorder
+      let dragIdx = null;
+      todoList.addEventListener("dragstart", (e) => {
+        if (!e.target.classList.contains("todo-card")) return;
+        dragIdx = +e.target.getAttribute("data-index");
+        e.target.classList.add("dragging");
+      });
+      todoList.addEventListener("dragend", (e) => {
+        if (!e.target.classList.contains("todo-card")) return;
+        e.target.classList.remove("dragging");
+        dragIdx = null;
+      });
+      todoList.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        const target = e.target.closest(".todo-card");
+        if (!target || dragIdx === null) return;
+        const overIdx = +target.getAttribute("data-index");
+        if (overIdx !== dragIdx) {
+          const dragged = tasks.splice(dragIdx, 1)[0];
+          tasks.splice(overIdx, 0, dragged);
+          saveTasks();
+          renderTasks();
+          dragIdx = overIdx;
+        }
+      });
+
+      // Responsive background shapes on theme change
+      function updateShapesForTheme() {
+        const theme = document.body.getAttribute("data-theme");
+        document.querySelector(".shape1").style.background =
+          theme === "dark"
+            ? "linear-gradient(135deg,#818cf8,#312e81)"
+            : "linear-gradient(135deg,#818cf8,#38bdf8)";
+        document.querySelector(".shape2").style.background =
+          theme === "dark"
+            ? "linear-gradient(135deg,#facc15,#ef4444)"
+            : "linear-gradient(135deg,#facc15,#ef4444)";
+        document.querySelector(".shape3").style.background =
+          theme === "dark"
+            ? "linear-gradient(135deg,#34d399,#312e81)"
+            : "linear-gradient(135deg,#34d399,#818cf8)";
+      }
+      const observer = new MutationObserver(updateShapesForTheme);
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+      updateShapesForTheme();
+    </script>
+  </body>
+</html>
